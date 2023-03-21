@@ -59,3 +59,40 @@ select DISTINCT department_id from employees where job_id  = 'ST_CLERK' and depa
 -- commision_pct null이 아닌 사원들 중에ㅔ서 commision = salary * commision_pct 를 구하여
 -- employee_id, first_name, job_id 출력
 select employee_id, first_name, job_id, salary * commission_pct as commision from employees where commission_pct is not null; 
+
+-- first_name이 Curtis인 사람의 first_name, last_name, email,phone_number, job_id를 조회한다.
+-- 단, job_id의 결과는 소문자로 출력되도록 한다.
+select first_name, last_name, email,phone_number, lower(job_id) from employees where first_name like 'Curtis';
+
+-- 부서번호가 60,70,80,90인 사원들의 employee_id, first_name, hire_date, job_id 조회
+-- 단, job_id가 IT_PROG인 사원의 경우 프로그래머로 변경한 후 출력
+select employee_id, first_name, hire_date, replace(job_id,'IT_PROG','프로그래머') from employees where department_id in(60,70,80,90);
+
+-- JOB_ID가 AD_PRES,PU_CLERK인 사원들의 employee_id, first_name, last_name, department_id, job_id를 조회한다
+-- 단, 사원명은 first_name과 last_name을 연결하여 출력하시오
+select employee_id, first_name || ' ' || last_name, department_id, job_id from employees where job_id in('AD_PRES','PU_CLERK');
+
+-- [실습4] 부서 80의 각 사원에 대해 적용 가능한 세율을 표시하시오.
+select last_name, salary,
+        decode(trunc(salary/2000,0),
+        0,
+        0.00,
+        1,
+        0.09,
+        2,
+        0.20,
+        3,
+        0.30,
+        4,
+        0.40,
+        5,
+        0.42,
+        6,
+        0.44,
+        0.45)as TAX_RATE
+from employees where department_id = 80;
+
+-- 회사 내의 최대 연봉 및 최소 연봉의 차이를 출력
+select max(salary) - min(salary) sal_gap from employees;
+-- 매니저로 근무하는 사원들의 총 숫자 출력(매니저 중복 제거)
+select count(distinct manager_id) from employees;
