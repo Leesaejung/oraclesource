@@ -579,67 +579,241 @@ select job, count(*) from emp group by job having count(job) >=3;
 select to_char(hiredate, 'YYYY') HIRE_YEAR, deptno, count(deptno) CNT from emp group by to_char(hiredate, 'YYYY'), deptno;
 
 -- 조인 : 여러 테이블을 하나의 테이블처럼 사용
--- 1) 내부 조인(Inner join) : 여러 개의 테이블에서 공통된 부분만 추출
---   ① 등가조인 : 두개의 열이 일치할 때
---   ② 비등가조인 : 범위에 해당할 때 값 추출
---
--- 2) 외부 조인(Outer join)
---   ① left outer join
---   ② right outer join
---   ③ full outer join
+-- 1) 내부조인(inner join) : 여러 개의 테이블에서 공통된 부분만 추출
+--    ① 등가조인 : 두 개의 열이 일치할 때 값 추출
+--    ② 비등가조인 : 범위에 해당할 때 값 추출
 
--- dept는 4행, emp : 12행 -> 4*12 = 48행
+-- 2) 외부조인(outer join)
+--    ① left outer join
+--    ② right outer join
+--    ③ full outer join
+
+-- dept : 4 행, emp : 12 행 ==> 4*12 = 48행
 -- 크로스 조인(나올 수 있는 모든 조합 추출)
-select * from emp, dept order by empno;
+SELECT
+    *
+FROM
+    emp,
+    dept
+ORDER BY
+    empno;
 
--- ORA-00918: 열의 정의가 애매합니다
+
+-- ORA-00918: 열의 정의가 애매합니다( column ambiguously defined )
+
 -- inner join
--- 찾아야 하는 값의 앞에 어느 테이블인지 명확하게 별칭해주기 e.empno, e.ename, d.deptno, d.dname, d.loc  //  emp e, dept d
-select e.empno, e.ename, d.deptno, d.dname, d.loc from emp e, dept d where e.deptno = d.deptno;
-
---조건 추가
-select e.empno, e.ename, d.deptno, d.dname, d.loc from emp e, dept d where e.deptno = d.deptno and sal >= 3000;
+SELECT
+    e.empno,
+    e.ename,
+    d.deptno,
+    d.dname,
+    d.loc
+FROM
+    emp  e,
+    dept d
+WHERE
+    e.deptno = d.deptno;
 
 -- SQL-99 표준
 -- join ~ on
-select e.empno, e.ename, d.deptno, d.dname, d.loc from emp e join dept d on e.deptno = d.deptno;
---조건 추가 -1
-select e.empno, e.ename, d.deptno, d.dname, d.loc from emp e join dept d on e.deptno = d.deptno and sal >= 3000;
+
+SELECT
+    e.empno,
+    e.ename,
+    d.deptno,
+    d.dname,
+    d.loc
+FROM
+         emp e
+    JOIN dept d ON e.deptno = d.deptno;
+
+SELECT
+    e.empno,
+    e.ename,
+    d.deptno,
+    d.dname,
+    d.loc
+FROM
+    emp  e,
+    dept d
+WHERE
+        e.deptno = d.deptno
+    AND sal >= 3000;
+
+-- SQL-99 표준
+-- join ~ on
+
+SELECT
+    e.empno,
+    e.ename,
+    d.deptno,
+    d.dname,
+    d.loc
+FROM
+         emp e
+    JOIN dept d ON e.deptno = d.deptno
+WHERE
+    sal >= 3000;
 
 
--- 급여가 2500이하이고, 사원번호가 9999 이하인 사원정보 조회
-select e.empno, e.ename, e.sal, d.deptno, d.dname, d.loc from emp e, dept d where e.deptno = d.deptno and sal <= 2500 and e.empno <= 9999;
+-- emp, dept inner join, 급여가 2500 이하이고, 사원번호가 9999 이하인 사원 정보 조회
+SELECT
+    e.empno,
+    e.ename,
+    e.sal,
+    d.deptno,
+    d.dname,
+    d.loc
+FROM
+    emp  e,
+    dept d
+WHERE
+        e.deptno = d.deptno
+    AND e.sal <= 2500
+    AND e.empno <= 9999;
+
+
+-- SQL-99 표준
+-- join ~ on
+SELECT
+    e.empno,
+    e.ename,
+    e.sal,
+    d.deptno,
+    d.dname,
+    d.loc
+FROM
+         emp e
+    JOIN dept d ON e.deptno = d.deptno
+WHERE
+        e.sal <= 2500
+    AND e.empno <= 9999;
+
+
 
 -- emp와 salgrade 조인
--- emp 테이블의 sal이 salgrade 테이블의 losal과 hisal 범위에 들어가는 형태 조인
-select * from emp e, salgrade s where e.sal BETWEEN s.losal and s.hisal;
+-- emp 테이블의 sal 이 salgrade 테이블의 losal 과 hisal 범위에 들어가는 형태로 조인
+
+SELECT
+    *
+FROM
+    emp      e,
+    salgrade s
+WHERE
+    e.sal BETWEEN s.losal AND s.hisal;
+
+
+-- SQL-99 표준
+-- join ~ on
+
+SELECT
+    *
+FROM
+         emp e
+    JOIN salgrade s ON e.sal BETWEEN s.losal AND s.hisal;
+
+
 
 -- self join : 자기 자신 테이블과 조인
-select e1.empno, e1.ename, e1.mgr, e2.empno as mgr_empno from emp e1, emp e2 where e1.mgr = e2.empno;
+SELECT
+    e1.empno,
+    e1.ename,
+    e1.mgr,
+    e2.empno AS mgr_empno,
+    e2.ename AS mgr_ename
+FROM
+    emp e1,
+    emp e2
+WHERE
+    e1.mgr = e2.empno;
+
 
 -- outer join
 
 -- 1) left outer join
-select e1.empno, e1.ename, e1.mgr, e2.empno as mgr_empno, e2.ename as mgr_ename from emp e1, emp e2 where e1.mgr = e2.empno(+);
-
--- 1) right outer join
-select e1.empno, e1.ename, e1.mgr, e2.empno as mgr_empno, e2.ename as mgr_ename from emp e1, emp e2 where e1.mgr(+) = e2.empno;
-
---ORA-01468: outer-join된 테이블은 1개만 지정할 수 있습니다
---select e1.empno, e1.ename, e1.mgr, e2.empno as mgr_empno, e2.ename as mgr_ename from emp e1, emp e2 where e1.mgr(+) = e2.empno(+);
+SELECT
+    e1.empno,
+    e1.ename,
+    e1.mgr,
+    e2.empno AS mgr_empno,
+    e2.ename AS mgr_ename
+FROM
+    emp e1,
+    emp e2
+WHERE
+    e1.mgr = e2.empno (+);
+    
 
 -- SQL-99 표준
--- join ~ on
+-- join ~ on    
 
-select e1.empno, e1.ename, e1.mgr, e2.empno as mgr_empno, e2.ename as mgr_ename from emp e1 left outer join emp e2 on e1.mgr = e2.empno;
-select e1.empno, e1.ename, e1.mgr, e2.empno as mgr_empno, e2.ename as mgr_ename from emp e1 right outer join emp e2 on e1.mgr = e2.empno;
-select e1.empno, e1.ename, e1.mgr, e2.empno as mgr_empno, e2.ename as mgr_ename from emp e1 full outer join emp e2 on e1.mgr = e2.empno;
+SELECT
+    e1.empno,
+    e1.ename,
+    e1.mgr,
+    e2.empno AS mgr_empno,
+    e2.ename AS mgr_ename
+FROM
+    emp e1
+    LEFT OUTER JOIN emp e2 ON e1.mgr = e2.empno;    
+    
 
--- 연결 해야 할 테이블이 3개 일때
-select * from table1 t1, table2 t2, table3 t3 
-where t1.empno=t2.empno and t2.deptno = t3.deptno;
+-- 2) right outer join
+SELECT
+    e1.empno,
+    e1.ename,
+    e1.mgr,
+    e2.empno AS mgr_empno,
+    e2.ename AS mgr_ename
+FROM
+    emp e1,
+    emp e2
+WHERE
+    e1.mgr (+) = e2.empno;
+    
+    
+-- SQL-99 표준
+-- join ~ on    
 
-select * from table1 t1 join table2 t2 on t1.empno = t2.empno join table3 t3 on t2.deptno = t3.deptno;
+SELECT
+    e1.empno,
+    e1.ename,
+    e1.mgr,
+    e2.empno AS mgr_empno,
+    e2.ename AS mgr_ename
+FROM
+    emp e1
+    RIGHT OUTER JOIN emp e2 ON e1.mgr = e2.empno; 
+
+-- outer-join된 테이블은 1개만 지정할 수 있습니다
+-- 01468. 00000 -  "a predicate may reference only one outer-joi
+--SELECT e1.empno, e1.ename, e1.mgr, e2.empno as mgr_empno, e2.ename as mgr_ename
+--FROM emp e1, emp e2
+--WHERE e1.mgr(+) = e2.empno(+);
+
+-- SQL-99 표준
+-- join ~ on    
+
+SELECT
+    e1.empno,
+    e1.ename,
+    e1.mgr,
+    e2.empno AS mgr_empno,
+    e2.ename AS mgr_ename
+FROM
+    emp e1
+    FULL OUTER JOIN emp e2 ON e1.mgr = e2.empno; 
+
+
+-- 연결해야 할 테이블이 세개일때
+
+--SELECT *
+--FROM table1 t1, table2 t2, table3 t3
+--WHERE t1.empno = t2.empno AND t2.deptno = t3.deptno;
+--
+--
+--SELECT *
+--FROM table1 t1 join table2 t2 on t1.empno = t2.empno join table3 t3 on t2.deptno = t3.deptno;
 
 --[실습1] 급여가 2000초과인 사원들의 부서 정보, 사원 정보를 아래와 같이 출력하는 SQL 문을 작성하시오.
 select d.deptno, d.dname, e.empno, e.ename, e.sal from dept d , emp e where d.deptno=e.deptno and e.sal > 2000;
