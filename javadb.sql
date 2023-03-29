@@ -70,4 +70,30 @@ user_id number(4) not null REFERENCES suser(user_id),
 product_id number(8) not null REFERENCES product(product_id)
 );
 
+alter table sorder add order_date DATE;  -- 구매날짜
+
 CREATE SEQUENCE order_seq; 
+
+-- user_id, name, pay_no, info
+select u.user_id, u.name, u.pay_no, p.info 
+from suser u, paytype p 
+where u.pay_no = p.pay_no and u.user_id=1000;
+
+select * from sorder;
+
+-- 주문 목록 조회
+-- user_id, name, card/cash, product_id, pname, price, content
+
+-- 기준 sorder
+-- suser 테이블 : name, 
+-- paytype 테이블 : card/cash
+-- product 테이블 : product_id, pname, price, content
+
+SELECT s.user_id, u.name, t.info, s.product_id, p.pname, p.price, p.content, s.order_date
+FROM sorder s, suser u, paytype t, product p
+WHERE s.user_id = u.user_id and u.pay_no = t.pay_no AND s.product_id = p.product_id;
+
+-- 홍길동 주문 목록
+SELECT s.user_id, u.name, t.info, s.product_id, p.pname, p.price, p.content, s.order_date
+FROM sorder s, suser u, paytype t, product p
+WHERE s.user_id = u.user_id and u.pay_no = t.pay_no AND s.product_id = p.product_id and s.user_id = 1000;
