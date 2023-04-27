@@ -618,3 +618,38 @@ BEGIN
     end if;
 end;
 /
+
+update emp_trg set sal= 8000 where empno = 7369; 
+commit;
+
+select * from emp_trg_log;
+
+-- 로그 기록 테이블
+create table emp_trg_log(
+    tablename varchar2(10),
+    DML_TYPE varchar2(10),
+    EMPNO number(4),
+    USER_NAME varchar2(30),
+    CHANGE_DATE DATE);
+
+-- log 기록 트리거
+create or replace trigger trg_emp_log -- 이 트리거를 실행해주세요
+AFTER -- 일어나기 전에  ↑
+INSERT or UPDATE or DELETE on emp_trg  -- 이런 일이 ↑
+FOR EACH ROW
+
+BEGIN
+    if INSERTING THEN
+        INSERT INTO emp_trg_log
+        values ('EMP_TRG', 'INSERT', :new.empno, SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+    elsif UPDATING then
+        INSERT INTO emp_trg_log
+        values ('EMP_TRG', 'UPDATE', :old.empno, SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+    elsif DELETING then
+        INSERT INTO emp_trg_log
+        values ('EMP_TRG', 'DELETE', :old.empno, SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+    end IF;
+end;
+/
+
+commit;
