@@ -161,3 +161,29 @@ create table memberTbl(
 insert into membertbl values('hong123', 'hong123@', '홍길동', '남', 'hong123@gmail.com');
 
 commit;
+
+select * from membertbl;
+
+-- 게시판
+-- 글번호(bno, 숫자, 시퀀스 삽입, pk(pk_board)), 작성자(name, 한글), 비밀번호(password, 숫자, 영문자), 제목(title, 한글), 내용(content, 한글),
+-- 파일첨부(attach 파일명), 답변글 작성 시 참조되는 글 번호(re_ref, 숫자), 답변글 레벨(re_lev, 숫자), 답변 글 순서(re_seq, 숫자)
+-- 조회수(cnt, 숫자, default 0 지정), 작성날짜(regdate, default로 sysdate 지정)
+
+create table board(
+    bno NUMBER(8) constraint pk_board primary key,
+    name nvarchar2(10) not null,
+    password varchar2(10) not null,
+    title nvarchar2(50) not null,
+    content nvarchar2(1000) not null,
+    attach nvarchar2(100),
+    re_ref number(8) not null,
+    re_lev number(8) not null,
+    re_seq number(8) not null,
+    cnt number(8) default 0,
+    regdate date default sysdate
+);
+
+-- 시퀀스 생성 board_seq
+CREATE SEQUENCE board_seq;
+
+select * from board;
