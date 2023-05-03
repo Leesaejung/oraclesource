@@ -187,3 +187,9 @@ create table board(
 CREATE SEQUENCE board_seq;
 
 select * from board;
+
+-- 서브쿼리
+insert into board(bno, name, password,title,content,re_ref,re_lev,re_seq)
+(select board_seq.nextval,name,password,title,content,board_seq.currval,re_lev,re_seq from board);
+
+commit;
