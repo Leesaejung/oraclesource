@@ -282,3 +282,24 @@ where rnum > ?;
 -- 1,2,3
 -- rownum 값 : 페이지번호 * 한 페이지에 보여줄 목록 개수
 -- rnum 값 : (페이지번호-1) * 한 페이지에 보여줄 목록 개수
+
+-- spring_board
+-- bno 숫자 (10) 제약조건 pk 제약조건명 pk_spring_board
+-- title varchar2(200) 제약조건 not null
+-- content varchar2(2000) 제약조건 not null
+-- writer varchar2(50) 제약조건 not null
+-- regdate date default 로 현재 시스템날짜
+-- updatedate date default로 현재 시스템 날짜
+
+-- 시퀀스 seq_board
+
+create table spring_board(
+    bno NUMBER(10) constraint pk_spring_board primary key,
+    title varchar2(200) not null,
+    content varchar2(2000) not null,
+    writer varchar2(50) not null,
+    regdate date default sysdate,
+    updatedate date default sysdate
+);
+
+CREATE SEQUENCE seq_board;
