@@ -160,6 +160,7 @@ create table memberTbl(
 
 insert into membertbl values('hong123', 'hong123@', '홍길동', '남', 'hong123@gmail.com');
 
+alter table membertbl modify password varchar2(100);
 commit;
 
 select * from membertbl;
@@ -303,3 +304,28 @@ create table spring_board(
 );
 
 CREATE SEQUENCE seq_board;
+
+-- mybatis 연습용 테이블
+create table person(
+    id varchar2(20) primary key,
+    name varchar2(30) not null
+);
+
+select * from person;
+
+insert into person values('kang123', '강길동');
+
+commit;
+
+
+-- 트랜젝션 테스트 테이블
+-- 트렌젝션 : 하나의 업무에 여러개의 작은 업무들이 같이 묶여 있음 / 하나의 단위로 처리
+-- 예시 : 계좌 이체 : 계좌 출금 -> 타 계좌 입금
+create table tbl_sample1(col1 varchar2(500));
+create table tbl_sample2(col1 varchar2(50));
+
+select * from tbl_sample1;
+select * from tbl_sample2;
+
+delete tbl_sample1;
+commit;
