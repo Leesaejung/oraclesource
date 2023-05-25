@@ -368,6 +368,10 @@ create table spring_reply(
     constraint fk_reply_board foreign key(bno) references spring_board(bno) -- 외래키 제약 조건
 );
 
+-- 댓글 테이블 수정(컬럼 추가) updatedate
+ALTER TABLE spring_reply ADD updatedate date default sysdate;
+ALTER TABLE spring_reply DROP column updatedate;
+
 create sequence seq_reply;
 
 insert into spring_reply(rno,bno,reply,replyer) 
@@ -380,8 +384,8 @@ commit;
 -- spring-reply 인덱스 추가 설정
 create index idx_reply on spring_reply(bno desc, rno asc);
 
-select rno,bno,reply,replyer,replydate
-    from(select /*+INDEX(spring_reply idx_reply)*/ rownum rn,rno,bno,reply,replyer,replydate
+select rno, bno, reply, replyer, replydate, updatedate
+    from(select /*+INDEX(spring_reply idx_reply)*/ rownum rn,rno,bno,reply,replyer,replydate,updatedate
     from spring_reply
     where bno=1582 and rownum <= 10) 
 where rn > 0;
