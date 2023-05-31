@@ -389,3 +389,42 @@ select rno, bno, reply, replyer, replydate, updatedate
     from spring_reply
     where bno=1582 and rownum <= 10) 
 where rn > 0;
+
+-- spring_board에 칼럼 추가(댓글 수 저장)
+alter table spring_board add replycnt number default 0;
+
+-- 이미 들어간 댓글 수 삽입
+update spring_board
+set replycnt = (select count(rno) from spring_reply where spring_board.bno = spring_reply.bno);
+
+commit;
+
+select * from spring_board where bno = 1582;
+
+-- 파일 첨부
+-- string_attach
+-- uuid, uploadpath, filename, filetype
+create table string_attach(
+    uuid varchar2(100) not null,
+    uploadpath varchar2(200) not null,
+    filename varchar2(100) not null,
+    filetype char(1) default '1',
+    bno number(10,0), 
+    constraint fk_board_attach foreign key(bno) references spring_board(bno)
+);
+
+-- spring_board bno와 string_attach bno 일치 시
+-- title,content,writer,bno,uuid,uploadpath,filetype,filename
+-- inner join
+SELECT
+    title,content,writer,sb.bno,sa.uuid, uploadpath,filetype,filename
+FROM spring_board sb, string_attach sa
+where sb.bno = sa.bno;
+
+SELECT
+    title,content,writer,sb.bno,sa.uuid, uploadpath,filetype,filename
+FROM spring_board sb, string_attach sa
+where sb.bno = 1622;
+
+-- 어제 날짜의 첨부 목록 가져오기
+selecr * from string_attach where uploadpath = to_char(sysdate-1, 'yyyy\mm\dd');
